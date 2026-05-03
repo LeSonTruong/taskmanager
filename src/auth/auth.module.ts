@@ -5,8 +5,6 @@ import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { RolesGuard } from './guards/roles.guard';
 import { MailModule } from '../mail/mail.module';
 
 @Module({
@@ -15,12 +13,12 @@ import { MailModule } from '../mail/mail.module';
     MailModule,
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'fallback_secret',
-      signOptions: { expiresIn: '1h' },
+      secret: process.env.JWT_SECRET || 'fallback_secret', // Phải khớp với JwtStrategy
+      signOptions: { expiresIn: '1h' }, // Token hết hạn sau 1 giờ
     }),
   ],
-  providers: [AuthService, JwtStrategy, JwtAuthGuard, RolesGuard],
+  providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
-  exports: [AuthService, JwtAuthGuard, RolesGuard],
+  exports: [AuthService],
 })
 export class AuthModule {}
