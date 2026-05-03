@@ -18,6 +18,8 @@ import { MailService } from './mail.service';
             user: configService.get<string>('MAIL_USER'),
             pass: configService.get<string>('MAIL_PASS'),
           },
+          logger: true,
+          debug: true,
         },
       }),
     }),

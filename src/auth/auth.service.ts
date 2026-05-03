@@ -52,7 +52,7 @@ export class AuthService {
   async register(createUserDto: CreateUserDto) {
     try {
       const user = await this.usersService.create(createUserDto);
-      console.log('1. Đã tạo User thành công');
+      console.log('1. Đã tạo User thành công:', user.email);
 
       // Tạo mã xác thực (6 chữ số)
       const verificationCode = this.generateVerificationCode();
@@ -62,15 +62,23 @@ export class AuthService {
         user.id,
         verificationCode,
       );
-      console.log('2. Đã tạo mã xác thực');
+      console.log('2. Đã tạo mã xác thực:', verificationCode);
 
       // Gửi email xác thực
-      await this.mailService.sendVerificationEmail(
-        user.email,
-        user.name,
-        verificationCode,
-      );
-      console.log('3. Đã gửi email xác thực');
+      try {
+        await this.mailService.sendVerificationEmail(
+          user.email,
+          user.name,
+          verificationCode,
+        );
+        console.log('3. Đã gửi email xác thực thành công');
+      } catch (mailError) {
+        console.error('LỖI GỬI EMAIL:', mailError);
+        // Vẫn trả về thành công vì user đã được tạo, nhưng log lỗi
+        throw new Error(
+          `Tạo tài khoản thành công nhưng lỗi gửi email xác thực: ${mailError.message}`,
+        );
+      }
 
       return {
         message:

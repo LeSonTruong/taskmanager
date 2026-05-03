@@ -13,11 +13,6 @@ export declare class AuthController {
     }>;
     signIn(signInDto: LoginDto): Promise<{
         access_token: string;
-        user: {
-            id: number;
-            name: string;
-            email: string;
-        };
     }>;
     verifyEmail(token: string): Promise<{
         success: boolean;

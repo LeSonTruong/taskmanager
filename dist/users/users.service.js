@@ -51,7 +51,6 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("./entities/user.entity");
 const bcrypt = __importStar(require("bcrypt"));
-const uuid_1 = require("uuid");
 let UsersService = class UsersService {
     usersRepository;
     constructor(usersRepository) {
@@ -66,11 +65,9 @@ let UsersService = class UsersService {
         }
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
-        const emailToken = (0, uuid_1.v4)();
         const newUser = this.usersRepository.create({
             ...createUserDto,
             password: hashedPassword,
-            emailToken: emailToken,
         });
         return this.usersRepository.save(newUser);
     }

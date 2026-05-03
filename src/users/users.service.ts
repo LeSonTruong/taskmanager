@@ -9,7 +9,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import { v4 as uuidv4 } from 'uuid'; // npm install uuid
 
 @Injectable()
 export class UsersService {
@@ -32,14 +31,10 @@ export class UsersService {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
 
-    // 3. Tạo token xác thực email (tạm thời dùng chuỗi ngẫu nhiên)
-    const emailToken = uuidv4();
-
-    // 4. Lưu User
+    // 3. Lưu User
     const newUser = this.usersRepository.create({
       ...createUserDto,
       password: hashedPassword,
-      emailToken: emailToken,
     });
 
     return this.usersRepository.save(newUser);
