@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = exports.LoginDto = void 0;
 const common_1 = require("@nestjs/common");
+const class_validator_1 = require("class-validator");
 const auth_service_1 = require("./auth.service");
 const create_user_dto_1 = require("../users/dto/create-user.dto");
 class LoginDto {
@@ -21,18 +22,42 @@ class LoginDto {
     password;
 }
 exports.LoginDto = LoginDto;
+__decorate([
+    (0, class_validator_1.IsEmail)({}, { message: 'Email không hợp lệ' }),
+    __metadata("design:type", String)
+], LoginDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)({ message: 'Mật khẩu không được để trống' }),
+    __metadata("design:type", String)
+], LoginDto.prototype, "password", void 0);
 let AuthController = class AuthController {
     authService;
     constructor(authService) {
         this.authService = authService;
     }
-    register(createUserDto) {
-        return this.authService.register(createUserDto);
+    async register(createUserDto) {
+        try {
+            return await this.authService.register(createUserDto);
+        }
+        catch (error) {
+            if (error instanceof common_1.BadRequestException) {
+                throw error;
+            }
+            throw error;
+        }
     }
-    signIn(signInDto) {
-        return this.authService.login(signInDto.email, signInDto.password);
+    async signIn(signInDto) {
+        try {
+            return await this.authService.login(signInDto.email, signInDto.password);
+        }
+        catch (error) {
+            throw error;
+        }
     }
     async verifyEmail(token) {
+        if (!token) {
+            throw new common_1.BadRequestException('Token không được để trống!');
+        }
         const result = await this.authService.verifyEmail(token);
         if (result) {
             return {
@@ -50,11 +75,12 @@ let AuthController = class AuthController {
 };
 exports.AuthController = AuthController;
 __decorate([
+    (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     (0, common_1.Post)('register'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], AuthController.prototype, "register", null);
 __decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
@@ -62,7 +88,7 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [LoginDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signIn", null);
 __decorate([
     (0, common_1.Get)('verify'),

@@ -9,6 +9,11 @@ export declare class AuthService {
     constructor(usersService: UsersService, jwtService: JwtService, mailService: MailService);
     login(email: string, pass: string): Promise<{
         access_token: string;
+        user: {
+            id: number;
+            name: string;
+            email: string;
+        };
     }>;
     register(createUserDto: CreateUserDto): Promise<{
         message: string;

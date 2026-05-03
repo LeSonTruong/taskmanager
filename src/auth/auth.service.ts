@@ -37,7 +37,7 @@ export class AuthService {
       throw new UnauthorizedException('Email hoặc mật khẩu không chính xác!');
     }
 
-    // 4. Tạo payload và trả về Token
+    // 4. Tạo payload và trả về Token + User data
     const payload = {
       sub: user.id,
       email: user.email,
@@ -46,6 +46,11 @@ export class AuthService {
 
     return {
       access_token: await this.jwtService.signAsync(payload),
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
     };
   }
 

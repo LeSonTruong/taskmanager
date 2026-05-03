@@ -14,6 +14,8 @@ const users_module_1 = require("../users/users.module");
 const jwt_1 = require("@nestjs/jwt");
 const passport_1 = require("@nestjs/passport");
 const jwt_strategy_1 = require("./strategies/jwt.strategy");
+const jwt_auth_guard_1 = require("./guards/jwt-auth.guard");
+const roles_guard_1 = require("./guards/roles.guard");
 const mail_module_1 = require("../mail/mail.module");
 let AuthModule = class AuthModule {
 };
@@ -29,9 +31,9 @@ exports.AuthModule = AuthModule = __decorate([
                 signOptions: { expiresIn: '1h' },
             }),
         ],
-        providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy],
+        providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy, jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard],
         controllers: [auth_controller_1.AuthController],
-        exports: [auth_service_1.AuthService],
+        exports: [auth_service_1.AuthService, jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard],
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map
