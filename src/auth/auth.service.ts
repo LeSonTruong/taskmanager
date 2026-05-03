@@ -54,14 +54,38 @@ export class AuthService {
       const user = await this.usersService.create(createUserDto);
       console.log('1. Đã tạo User thành công');
 
-      await this.mailService.sendWelcomeEmail(user.email, user.name);
-      console.log('2. Đã gọi hàm gửi Mail');
+      // Tạo mã xác thực (6 chữ số)
+      const verificationCode = this.generateVerificationCode();
 
-      return { message: 'Thành công!' };
+      // Lưu mã xác thực vào database
+      await this.usersService.updateVerificationToken(
+        user.id,
+        verificationCode,
+      );
+      console.log('2. Đã tạo mã xác thực');
+
+      // Gửi email xác thực
+      await this.mailService.sendVerificationEmail(
+        user.email,
+        user.name,
+        verificationCode,
+      );
+      console.log('3. Đã gửi email xác thực');
+
+      return {
+        message:
+          'Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản của bạn.',
+        email: user.email,
+      };
     } catch (error) {
-      console.error('LỖI ĐÂY NÀY:', error); // Nó sẽ in chi tiết lỗi ra Terminal
+      console.error('LỖI ĐĂNG KÝ:', error);
       throw error;
     }
+  }
+
+  private generateVerificationCode(): string {
+    // Tạo mã 6 chữ số
+    return Math.floor(100000 + Math.random() * 900000).toString();
   }
 
   async verifyEmail(token: string | null) {

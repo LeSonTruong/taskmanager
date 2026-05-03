@@ -84,6 +84,13 @@ export class UsersService {
     });
   }
 
+  // Cập nhật token xác thực email
+  async updateVerificationToken(id: number, token: string): Promise<void> {
+    await this.usersRepository.update(id, {
+      emailToken: token,
+    });
+  }
+
   // Cập nhật trạng thái đã xác thực
   async verifyUser(id: number): Promise<void> {
     await this.usersRepository.update(id, {

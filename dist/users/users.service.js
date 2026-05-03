@@ -101,6 +101,11 @@ let UsersService = class UsersService {
             where: { emailToken: token },
         });
     }
+    async updateVerificationToken(id, token) {
+        await this.usersRepository.update(id, {
+            emailToken: token,
+        });
+    }
     async verifyUser(id) {
         await this.usersRepository.update(id, {
             isVerified: true,

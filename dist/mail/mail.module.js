@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MailModule = void 0;
 const mailer_1 = require("@nestjs-modules/mailer");
 const common_1 = require("@nestjs/common");
+const config_1 = require("@nestjs/config");
 const mail_service_1 = require("./mail.service");
 let MailModule = class MailModule {
 };
@@ -16,15 +17,21 @@ exports.MailModule = MailModule;
 exports.MailModule = MailModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            mailer_1.MailerModule.forRoot({
-                transport: {
-                    host: 'sandbox.smtp.mailtrap.io',
-                    port: 2525,
-                    auth: {
-                        user: '8d54f48db0aad9',
-                        pass: '80eb7776fc8b80',
+            config_1.ConfigModule,
+            mailer_1.MailerModule.forRootAsync({
+                imports: [config_1.ConfigModule],
+                inject: [config_1.ConfigService],
+                useFactory: (configService) => ({
+                    transport: {
+                        host: configService.get('MAIL_HOST'),
+                        port: configService.get('MAIL_PORT'),
+                        secure: false,
+                        auth: {
+                            user: configService.get('MAIL_USER'),
+                            pass: configService.get('MAIL_PASS'),
+                        },
                     },
-                },
+                }),
             }),
         ],
         providers: [mail_service_1.MailService],

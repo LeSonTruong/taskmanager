@@ -12,6 +12,8 @@ export declare class AuthService {
     }>;
     register(createUserDto: CreateUserDto): Promise<{
         message: string;
+        email: string;
     }>;
+    private generateVerificationCode;
     verifyEmail(token: string | null): Promise<boolean>;
 }

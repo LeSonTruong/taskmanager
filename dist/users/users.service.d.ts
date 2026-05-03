@@ -12,5 +12,6 @@ export declare class UsersService {
     remove(id: number): Promise<void>;
     findOneByEmail(email: string): Promise<User | null>;
     findByToken(token: string): Promise<User | null>;
+    updateVerificationToken(id: number, token: string): Promise<void>;
     verifyUser(id: number): Promise<void>;
 }

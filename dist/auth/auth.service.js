@@ -82,14 +82,23 @@ let AuthService = class AuthService {
         try {
             const user = await this.usersService.create(createUserDto);
             console.log('1. Đã tạo User thành công');
-            await this.mailService.sendWelcomeEmail(user.email, user.name);
-            console.log('2. Đã gọi hàm gửi Mail');
-            return { message: 'Thành công!' };
+            const verificationCode = this.generateVerificationCode();
+            await this.usersService.updateVerificationToken(user.id, verificationCode);
+            console.log('2. Đã tạo mã xác thực');
+            await this.mailService.sendVerificationEmail(user.email, user.name, verificationCode);
+            console.log('3. Đã gửi email xác thực');
+            return {
+                message: 'Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản của bạn.',
+                email: user.email,
+            };
         }
         catch (error) {
-            console.error('LỖI ĐÂY NÀY:', error);
+            console.error('LỖI ĐĂNG KÝ:', error);
             throw error;
         }
+    }
+    generateVerificationCode() {
+        return Math.floor(100000 + Math.random() * 900000).toString();
     }
     async verifyEmail(token) {
         if (!token) {

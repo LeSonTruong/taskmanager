@@ -9,6 +9,7 @@ export declare class AuthController {
     constructor(authService: AuthService);
     register(createUserDto: CreateUserDto): Promise<{
         message: string;
+        email: string;
     }>;
     signIn(signInDto: LoginDto): Promise<{
         access_token: string;
